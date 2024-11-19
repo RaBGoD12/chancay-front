@@ -2,37 +2,43 @@
 import React, { useState } from "react";
 import { Embarcacion } from "../types";
 
-
 interface EmbarcacionFormProps {
-    onSubmit: (data: Omit<Embarcacion, 'id'>) => Promise<void>;
-
-    onCancel: () => void;
-  
-    disabled: boolean;
-  
-    initialData: Embarcacion | null;
-  
-  }
-
+  onSubmit: (data: Omit<Embarcacion, 'id'>) => Promise<void>;
+  onCancel: () => void;
+  disabled: boolean;
+  initialData: Embarcacion | null;
+}
 
 interface FormData {
   nombre: string;
-  capacidad: string; // Changed to string
+  capacidad: string;
   descripcion: string;
+  fechaProgramada: string;
 }
 
 const initialFormData: FormData = {
   nombre: "",
-  capacidad: "", // Changed to empty string
-  descripcion: ""
+  capacidad: "",
+  descripcion: "",
+  fechaProgramada: new Date().toISOString().split('T')[0] // Default to today
 };
 
 const EmbarcacionForm: React.FC<EmbarcacionFormProps> = ({ 
   onSubmit, 
   onCancel,
-  disabled = false 
+  disabled = false,
+  initialData = null 
 }) => {
-  const [formData, setFormData] = useState<FormData>(initialFormData);
+  const [formData, setFormData] = useState<FormData>(() => {
+    if (initialData) {
+      return {
+        ...initialData,
+        capacidad: String(initialData.capacidad),
+        fechaProgramada: initialData.fechaProgramada.split('T')[0]
+      };
+    }
+    return initialFormData;
+  });
   const [errors, setErrors] = useState<Partial<Record<keyof FormData, string>>>({});
 
   const validateForm = () => {
@@ -49,6 +55,10 @@ const EmbarcacionForm: React.FC<EmbarcacionFormProps> = ({
     
     if (!formData.descripcion.trim()) {
       newErrors.descripcion = 'La descripción es requerida';
+    }
+
+    if (!formData.fechaProgramada) {
+      newErrors.fechaProgramada = 'La fecha es requerida';
     }
     
     setErrors(newErrors);
@@ -102,7 +112,7 @@ const EmbarcacionForm: React.FC<EmbarcacionFormProps> = ({
       <div className="form-group">
         <label htmlFor="capacidad">Capacidad:</label>
         <input
-          type="text" // Changed to text
+          type="text"
           id="capacidad"
           name="capacidad"
           value={formData.capacidad}
@@ -124,6 +134,22 @@ const EmbarcacionForm: React.FC<EmbarcacionFormProps> = ({
           className={errors.descripcion ? 'error' : ''}
         />
         {errors.descripcion && <span className="error-message">{errors.descripcion}</span>}
+      </div>
+
+      <div className="form-group">
+        <label htmlFor="fechaProgramada">Fecha Programada:</label>
+        <input
+          type="date"
+          id="fechaProgramada"
+          name="fechaProgramada"
+          value={formData.fechaProgramada}
+          onChange={handleChange}
+          disabled={disabled}
+          className={errors.fechaProgramada ? 'error' : ''}
+        />
+        {errors.fechaProgramada && (
+          <span className="error-message">{errors.fechaProgramada}</span>
+        )}
       </div>
 
       <div className="form-actions">

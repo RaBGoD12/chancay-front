@@ -3,4 +3,5 @@ export interface Embarcacion {
     nombre: string;
     capacidad: number;
     descripcion: string;
+    fechaProgramada: string;
 }

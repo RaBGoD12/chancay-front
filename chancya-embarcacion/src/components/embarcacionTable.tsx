@@ -10,7 +10,6 @@ interface EmbarcacionTableProps {
   error?: string;
 }
 
-
 const EmbarcacionTable: React.FC<EmbarcacionTableProps> = ({
   embarcaciones,
   onDelete,
@@ -55,14 +54,14 @@ const EmbarcacionTable: React.FC<EmbarcacionTableProps> = ({
   if (loading) return <div className="loading">Cargando embarcaciones...</div>;
   if (error) return <div className="error">{error}</div>;
 
-    const handleDelete = async (id: number) => {
-        try {
-            await onDelete(id);
-            setDeleteConfirm(null);
-        } catch (error) {
-            console.error('Error deleting:', error);
-        }
-    };
+  const handleDelete = async (id: number) => {
+    try {
+      await onDelete(id);
+      setDeleteConfirm(null);
+    } catch (error) {
+      console.error('Error deleting:', error);
+    }
+  };
 
   return (
     <div className="table-container">
@@ -78,6 +77,7 @@ const EmbarcacionTable: React.FC<EmbarcacionTableProps> = ({
               <th>Nombre</th>
               <th>Capacidad</th>
               <th>Descripción</th>
+              <th>Fecha Programada</th>
               <th>Acciones</th>
             </tr>
           </thead>
@@ -121,6 +121,7 @@ const EmbarcacionTable: React.FC<EmbarcacionTableProps> = ({
                     embarcacion.descripcion
                   )}
                 </td>
+                <td>{new Date(embarcacion.fechaProgramada).toLocaleDateString()}</td>
                 <td className="actions">
                   {editingId === embarcacion.id ? (
                     <>
